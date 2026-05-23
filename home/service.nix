@@ -50,4 +50,14 @@
       WantedBy = [ "timers.target" ];
     };
   };
+  
+  services.wlsunset = {
+    enable = true;
+    latitude = "-1.09";  # Approximate for Narok
+    longitude = "35.86";
+    temperature = {
+      day = 6500;
+      night = 3500;
+    };
+  };
 }

@@ -83,28 +83,13 @@
     };
   };
 
-  # Brave Browser Configuration
-  # Create a wrapper script that launches Brave with dark mode flags
-  home.packages = [
-    pkgs-unstable.brave
-    (pkgs.writeShellScriptBin "brave-dark" ''
-      exec ${pkgs-unstable.brave}/bin/brave \
-        --enable-features=WebUIDarkMode \
-        --force-dark-mode \
-        --enable-force-dark \
-        --force-prefers-color-scheme=dark \
-        "$@"
-    '')
-  ];
-
   # Enable Catppuccin theming for Firefox
   catppuccin.firefox.enable = true;
 
-  # Note: Brave configuration files are managed manually due to Home Manager conflicts
-  # The brave-dark wrapper script provides automatic dark mode via command-line flags
-  # Configure Brave manually after first launch:
-  # 1. Go to Settings → Search engine → Set DuckDuckGo as default
-  # 2. Privacy settings are already good (Brave defaults)
-  # 3. Theme will follow system (dark mode) due to wrapper script flags
-  # 4. Add bookmarks: Claude AI (https://claude.ai), GitHub, NixOS
+  # Alternative Browsers
+  home.packages = [
+    # Qutebrowser: A keyboard-focused browser with a minimal GUI
+    pkgs-unstable.qutebrowser
+  ];
+
 }

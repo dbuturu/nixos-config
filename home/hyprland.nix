@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, config, ...}:
+{ pkgs, pkgs-unstable, config, inputs, ...}:
 
 let
   # Self-referencing: access our own config to generate a help script
@@ -33,6 +33,9 @@ in # This is the end of the 'let' block and the start of your main config
     wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs-unstable.hyprland; # Use unstable (0.52+) for crash fixes
+    plugins = [
+      pkgs-unstable.hyprlandPlugins.hy3
+    ];
     settings = {
       monitor = ",preferred,auto,1";
 
@@ -42,11 +45,15 @@ in # This is the end of the 'let' block and the start of your main config
         "QT_STYLE_OVERRIDE,Adwaita-dark"
         "COLOR_SCHEME,prefer-dark"
         "GTK_APPLICATION_PREFER_DARK_THEME,1"
+        # Enable Wayland support for Electron-based apps
+        "ELECTRON_ENABLE_WAYLAND,1"
+        # Ensure session type advertises Wayland where sessions don't set it
+        "XDG_SESSION_TYPE,wayland"
       ];
 
       exec-once = [ 
         "waybar"
-        "swww init"  # Initialize swww daemon
+        "swww-daemon"  # Initialize swww daemon
         "wallpaper-rotate"  # Set random wallpaper at startup
         "wl-paste --type text --watch cliphist store"  # Start clipboard history daemon
         "wl-paste --type image --watch cliphist store"  # Store image clipboard items
@@ -59,49 +66,77 @@ in # This is the end of the 'let' block and the start of your main config
       bind = [
         # -- App Launchers --
         "$mainMod, RETURN, exec, kitty"
+        # "$mainMod SHIFT, RETURN, exec, kitty"
         "$mainMod, D, exec, wofi --show drun"
-        "$mainMod, E, exec, thunar"
-        "$mainMod, O, exec, obsidian"
-        "$mainMod, B, exec, brave-dark"
-        "$mainMod SHIFT, B, exec, firefox"
-        "$mainMod, L, exec, hyprlock"
-        "$mainMod, R, exec, cider"
-        "$mainMod, X, exec, wlogout" 
+        # "$mainMod, D, exec, paswordmanger"        
+        "$mainMod, N, exec, obsidian"
+        "$mainMod, W, exec, firefox"
+        "$mainMod, Escape, exec, hyprlock"
+        "$mainMod, R, exec, kitty yazi"
+        "$mainMod SHIFT, R, exec, kitty btop"
+        "$mainMod, E, exec, kitty neomutt"
+        "$mainMod SHIFT, E, exec, kitty abook"
+        "$mainMod, M, exec, kitty ncmpcpp"
+        "$mainMod SHIFT, N, exec, kitty newsboat"
+        "$mainMod SHIFT, W, exec, kitty nmtui"
+        "$mainMod, BACKSPACE, exec, wlogout"
+         
+        # -- Function Keys --
+        "$mainMod, F1, exec, hypr-keybinds"
+        "$mainMod, F4, exec, kitty pulsemixer"
+        "$mainMod, F8, exec, kitty mutt-wizard"
+        # "$mainMod, F9, exec, dmenumount"
+        # "$mainMod, F10, exec, dmenuumount"
+        "$mainMod, F11, exec, mpv av://v4l2:/dev/video0 --profile=low-latency --untimed"
+        "$mainMod, apostrophe, exec, wofi-emoji"
+        "$mainMod, Insert, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
 
         # -- Screenshots --
         ", Print, exec, screenshot full"
         "SHIFT, Print, exec, screenshot select"
 
+        # -- Screencasting & Recording --
+        # "$mainMod, Print, exec, dmenurecord"
+        # "$mainMod SHIFT, C, exec, toggle-webcam"
+        # "$mainMod, Scroll_Lock, exec, toggle-screenkey"
+
         # -- Window Management --
-        "$mainMod, Q, killactive,"
-        "$mainMod, M, exit,"
-        "$mainMod, F, fullscreen,"
-        "$mainMod, SPACE, togglefloating,"
-        "$mainMod, P, pseudo, # dwindle"
-        "$mainMod SHIFT, P, togglesplit, # dwindle"
+        "$mainMod, Q, killactive"
+        # "$mainMod, DELETE, exec, kill-recording # Kills any running screen recording"
+        "$mainMod, F, fullscreen"
+        "$mainMod, SPACE, togglefloating"
+        # "$mainMod, P, pseudo, # dwindle"
+        # "$mainMod SHIFT, P, togglesplit, # dwindle"
 
-        # -- Focus / Move with Arrow Keys --
-        "$mainMod, left, movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod, up, movefocus, u"
-        "$mainMod, down, movefocus, d"
+        # -- Hy3 Layout --
+        # "$mainMod, S, hy3:makegroup, v"
+        # "$mainMod, G, hy3:makegroup, h"
+        # "$mainMod, Z, hy3:makegroup, tab"
 
-        "$mainMod SHIFT, left, movewindow, l"
-        "$mainMod SHIFT, right, movewindow, r"
-        "$mainMod SHIFT, up, movewindow, u"
-        "$mainMod SHIFT, down, movewindow, d"
+        # -- Focus / Move with Vim Keys --
+        "$mainMod, h, movefocus, l"
+        "$mainMod, l, movefocus, r"
+        "$mainMod, k, movefocus, u"
+        "$mainMod, j, movefocus, d"
 
-        # -- Resize Windows --
-        "$mainMod CTRL, left, resizeactive, -20 0"
-        "$mainMod CTRL, right, resizeactive, 20 0"
-        "$mainMod CTRL, up, resizeactive, 0 -20"
-        "$mainMod CTRL, down, resizeactive, 0 20"
+        # -- Move with Vim Keys --
+        "$mainMod SHIFT, h, movewindow, l"
+        "$mainMod SHIFT, l, movewindow, r"
+        "$mainMod SHIFT, k, movewindow, u"
+        "$mainMod SHIFT, j, movewindow, d"
 
-        # -- Keybinding Helper --
-        "$mainMod, slash, exec, hypr-keybinds"
+        # -- Resize Windows --	
+        #"$mainMod CTRL, left, resizeactive, -20 0"
+        #"$mainMod CTRL, right, resizeactive, 20 0"
+        #"$mainMod CTRL, up, resizeactive, 0 -20"
+        #"$mainMod CTRL, down, resizeactive, 0 20"
 
         # -- Clipboard Manager --
         "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+
+        # -- Scratchpad --
+        "$mainMod, S, togglespecialworkspace, magic"
+        "$mainMod SHIFT, S, movetoworkspace, special:magic"
 
         # -- Workspace Navigation --
         "$mainMod, 1, workspace, 1"
@@ -130,6 +165,7 @@ in # This is the end of the 'let' block and the start of your main config
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
+        # layout = "hy3";
         allow_tearing = true; # Reduces input lag for gaming
         # Border colors will be set by Catppuccin theme
       };
@@ -141,6 +177,9 @@ in # This is the end of the 'let' block and the start of your main config
           size = 5;
           passes = 2;
         };
+        active_opacity = 0.95;
+        inactive_opacity = 0.75;
+        fullscreen_opacity = 1.00;
       };
 
       animations = {
@@ -155,6 +194,35 @@ in # This is the end of the 'let' block and the start of your main config
         ];
       };
 
+      plugin = {
+        hy3 = {
+          no_gaps_when_only = 1; # 0 - always show gaps, 1 - hide gaps with a single window
+          node_collapse_policy = 2; # 2 = keep the nested group only if its parent is a tab group
+          group_inset = 10;
+          tab_first_window = false;
+
+          tabs = {
+            height = 20;
+            padding = 6;
+            from_top = false;
+            radius = 10;
+            render_text = true;
+            text_center = true;
+            text_font = "Sans";
+            text_height = 8;
+            text_padding = 3;
+          };
+
+          autotile = {
+            enable = true;
+            ephemeral_groups = true;
+            trigger_width = 800;
+            trigger_height = 500;
+            workspaces = "all";
+          };
+        };
+      };
+
       # Window rules - automatically assign applications to specific workspaces
       windowrulev2 = [
         "workspace 2,class:^(brave-browser)$"
@@ -163,11 +231,27 @@ in # This is the end of the 'let' block and the start of your main config
         "tile,class:^(Godot)$"
         "tile,class:^(godot)$"
       ];
+
+      input = {
+        kb_layout = "jp";
+        kb_variant = "";
+        kb_model = "jp106";
+        kb_options = "caps:escape_shifted_capslock";
+        kb_rules = "";
+
+        follow_mouse = 1;
+
+        sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+
+        touchpad = {
+          natural_scroll = false;
+        };
+      };
     };
   };
 
-  # Add our generated script to user packages
-  home.packages = [ keybinds-script ];
+  # Add our generated script to user packages and include Wayland helpers
+  home.packages = [ keybinds-script pkgs.xdg-desktop-portal pkgs.xdg-desktop-portal-wlr ];
 
   # Enable Catppuccin theming for Hyprland
   catppuccin.hyprland.enable = true;

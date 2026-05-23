@@ -1,20 +1,22 @@
-{pkgs, pkgs-unstable, ...}:
+{pkgs, pkgs-unstable, anipy-cli, ...}:
 
 {
   home.packages = 
     # Core System Utilities (Stable)
     (with pkgs; [
-      libnotify          # Desktop notifications
-      pwvucontrol        # PipeWire volume control
-      btop               # System monitor
-      lm_sensors         # Hardware sensors
+      libnotify            # Desktop notifications
+      pulsemixer           # PipeWire volume control
+      wiremix              # PipeWire mixer
+      btop                 # System monitor
+      lm_sensors           # Hardware sensors
       nvtopPackages.nvidia # GPU monitoring for btop
+      bluetui              # Bluetooth control
     ]) ++
 
     # File Manager (Stable)
     (with pkgs; [
-      xfce.thunar              # GUI file manager with drag-and-drop
-      xfce.thunar-volman       # Automatic device management
+      xfce.thunar                 # GUI file manager with drag-and-drop
+      xfce.thunar-volman          # Automatic device management
       xfce.thunar-archive-plugin  # Archive file support
     ]) ++
     
@@ -25,13 +27,16 @@
       fzf                # Fuzzy finder
       zoxide             # Smart 'cd' command
       gh                 # GitHub CLI
+      yazi               # File Managers
+      zip                # Zip zips
+      unzip              # Unzip zips 
     ]) ++
     
     # Fonts and Themes (Stable)
     (with pkgs; [
-      nerd-fonts.jetbrains-mono  # Programming font with icons
+      nerd-fonts.jetbrains-mono         # Programming font with icons
       # papirus-icon-theme - provided by Catppuccin
-      libsForQt5.qtstyleplugin-kvantum # Qt theme engine for Catppuccin
+      libsForQt5.qtstyleplugin-kvantum  # Qt theme engine for Catppuccin
       qt6Packages.qtstyleplugin-kvantum # Qt6 theme engine
     ]) ++
     
@@ -42,6 +47,7 @@
       python3            # Python interpreter
       uv                 # Python tool runner (pipx alternative)
       nodejs             # JavaScript runtime
+      android-tools      # android tools
     ]) ++
     
     # Media and Screenshot Tools (Unstable)
@@ -51,8 +57,13 @@
       wl-clipboard       # Wayland clipboard
       cliphist           # Clipboard history manager
       loupe              # Image viewer
-      cider              # Apple Music client
-    ]) ++
+      mpd                # Music player backend
+      ncmpcpp            # Music player frontend
+      ani-cli            # Anime player
+    ])  ++
+    [
+     anipy-cli.packages.${pkgs.system}.default #Ainme player
+    ]++
     
     # Gaming (Unstable - Latest Compatibility)
     (with pkgs-unstable; [
@@ -62,18 +73,29 @@
       gamescope          # Gaming compositor
       vulkan-tools       # Graphics debugging tools
       prismlauncher      # Minecraft launcher (maintained alternative)
-      wowup-cf           # World of Warcraft addon manager (CurseForge)
-      r2modman           # Thunderstore mod manager (Risk of Rain 2, Lethal Company, etc.)
+      mindustry          # Sandbox tower defence game
+      luanti             # An open-source voxel game creation platform
     ]) ++
     
     # Productivity Applications (Unstable)
     (with pkgs-unstable; [
       obsidian           # Note-taking and knowledge management
+      notesnook          # Note-taking
+      newsboat           # RSS feed reader
+      mutt-wizard        # Setup mutt
+      libreoffice        # Office suite
+      zathura            # PDF reader
+      numbat             # High precision scientific calculator with full support for physical units
+      libqalculate       # Qalculate! library and CLI
+      mission-planner    # ArduPilot ground station
+      qgis               # Free and Open Source Geographic Information System
     ]) ++
     
     # Communication (Unstable)
     (with pkgs-unstable; [
       discord            # Voice and text chat
+      neomutt            # Email
+      abook              # Phonebook
     ]) ++
     
     # Audio Production Tools (Mixed)
@@ -83,8 +105,7 @@
       alsa-utils         # ALSA utilities (PipeWire compatible)
     ]) ++
     (with pkgs-unstable; [
-      reaper             # Professional DAW
       ffmpeg-full        # Comprehensive media conversion
-      vlc                # Media player with codec support
+      mpv                # Media player with codec support
     ]);
 }

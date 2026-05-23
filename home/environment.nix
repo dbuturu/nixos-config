@@ -8,15 +8,11 @@
     NIXOS_OZONE_WL = "1";           # Chromium/Electron use Wayland
 
     # Dark mode theming
-    BRAVE_FLAGS = "--enable-features=WebUIDarkMode --force-dark-mode";
     GTK_THEME = "Adwaita:dark";
     # QT_STYLE_OVERRIDE managed by catppuccin Qt theming
 
     # UV Python configuration for NixOS compatibility
     UV_PYTHON_PREFERENCE = "only-system";
-
-    # 1Password SSH agent configuration
-    SSH_AUTH_SOCK = "~/.1password/agent.sock";
   };
 
   # Shell initialization for environment variables

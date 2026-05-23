@@ -13,16 +13,11 @@
         reload_style_on_change = true;
         modules-left = [ "hyprland/workspaces" "mpris" "custom/music-viz" ];
         modules-center = [ "hyprland/window" ];
-        modules-right = [ "custom/services" "custom/vpn" "pulseaudio" "network" "cpu" "memory" "custom/temps" "clock" "tray" ];
+        modules-right = [ "custom/services" "custom/vpn" "pulseaudio" "network" "bluetooth" "cpu" "memory" "custom/temps" "battery" "clock" "tray" ];
 
         "hyprland/workspaces" = {
           "format" = "{id}";
           "on-click" = "activate";
-          "format-icons" = {
-            "default" = "";
-            "active" = "";
-            "urgent" = "";
-          };
           "sort-by-number" = true;
         };
         
@@ -50,13 +45,14 @@
           "format-icons" = {
             "default" = [ "" "" "" ];
           };
-          "on-click" = "pwvucontrol";
+          "on-click" = "kitty -e wiremix";
         };
 
         "network" = {
-          "format-wifi" = " ";
+          "format-wifi" = "ᯤ";
           "format-ethernet" = "󰈀";
           "format-disconnected" = "󰌙";
+	  "on-click" = "kitty -e nmtui";
           "tooltip-format" = "{ifname}: {essid} via {gwaddr}";
         };
 
@@ -129,6 +125,31 @@
             };
           };
         };
+
+        "battery" = {
+          "states" = {
+            "good" = 95;
+            "warning" = 30;
+            "critical" = 15;
+          };
+          "format" = "{icon} {capacity}%";
+          "format-charging" = "󰂄 {capacity}%";
+          "format-plugged" = "󰂄 {capacity}%";
+          "format-alt" = "{time} {icon}";
+          "format-icons" = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+        };
+
+	"bluetooth" = {
+	  "format" = " {status}";
+	  "format-connected" = " {device_alias}";
+	  "format-connected-battery" = " {device_alias} {device_battery_percentage}%";
+	  # "format-device-preference" = [ "device1", "device2" ] // preference list deciding the displayed device
+	  "tooltip-format" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+	  "tooltip-format-connected" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+	  "tooltip-format-enumerate-connected" = "{device_alias}\t{device_address}";
+	  "tooltip-format-enumerate-connected-battery" = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+	  "on-click" = "kitty -e bluetui";
+        };
         
         "tray" = {
           "icon-size" = 16;
@@ -175,7 +196,7 @@
       }
 
       #cpu, #memory, #custom-temps, #pulseaudio, 
-      #network, #clock, #mpris, #custom-services,
+      #network, #bluetooth, #battery, #clock, #mpris, #custom-services,
       #custom-music-viz, #custom-vpn {
         padding: 4px 10px;
         margin: 4px 3px;
