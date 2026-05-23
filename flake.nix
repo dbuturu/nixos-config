@@ -1,5 +1,5 @@
 {
-  description = "Larry's NixOS Configuration";
+  description = "Dbuturu's NixOS Configuration";
   
   # Binary cache configuration for CUDA packages
   nixConfig = {
@@ -25,7 +25,7 @@
     # Catppuccin theming for comprehensive application support
     catppuccin.url = "github:catppuccin/nix/d75e3fe67f49728cb5035bc791f4b9065ff3a2c9";
   };
-
+ 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, catppuccin, ... }@inputs: 
     let
       theme = import ./theme/theme.nix;
@@ -39,11 +39,11 @@
     in
   {
     nixosConfigurations = {
-      "larry-desktop" = nixpkgs.lib.nixosSystem {
+      "nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs pkgs-unstable theme catppuccin; }; # Pass variables to all modules
         modules = [
-          ./configuration.nix # System-level configuration
+          .hosts/nixos/configuration.nix # System-level configuration
           home-manager.nixosModules.home-manager # User environment management
           catppuccin.nixosModules.catppuccin # Catppuccin theming support
         ];
