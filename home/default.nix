@@ -22,7 +22,6 @@
     # Applications & Environments
     ./packages.nix
     ./browsers.nix
-    ./vscode.nix
     ./neovim.nix
     ./wezterm.nix
 
