@@ -25,7 +25,6 @@
     ./vscode.nix
     ./neovim.nix
     ./wezterm.nix
-    ./1password.nix
 
     # System Integration & Background Workers
     ./environment.nix
