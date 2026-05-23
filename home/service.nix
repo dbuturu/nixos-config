@@ -26,32 +26,28 @@
   };
 
   # Systemd user services and timers
-  systemd.user = {
-    # Random wallpaper rotation service
-    services.wallpaper-rotate = {
-      Unit = {
-        Description = "Rotate wallpaper randomly";
-      };
-      Service = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'wallpaper-rotate'";
-      };
+  systemd.user.services.dynamic-wallpaper = {
+    Unit = {
+      Description = "Calculate and update dynamic blended wallpaper via swww";
+      After = [ "swww-daemon.service" ];
     };
+    Service = {
+      Type = "oneshot";
+      # Executes the script directly out of your user's dynamic nix package profile
+      ExecStart = "blend-wallpaper";
+    };
+  };
 
-    # Timer for random wallpaper rotation
-    timers.wallpaper-rotate = {
-      Unit = {
-        Description = "Run wallpaper rotation at random intervals";
-      };
-      Timer = {
-        # Run every 15-45 minutes (randomized)
-        OnCalendar = "*:00/15";
-        RandomizedDelaySec = "30min";
-        Persistent = true;
-      };
-      Install = {
-        WantedBy = [ "timers.target" ];
-      };
+  systemd.user.timers.dynamic-wallpaper = {
+    Unit = {
+      Description = "Trigger wallpaper blending calculation every 3 minutes";
+    };
+    Timer = {
+      OnCalendar = "*:0/3";
+      Persistent = true;
+    };
+    Install = {
+      WantedBy = [ "timers.target" ];
     };
   };
 }

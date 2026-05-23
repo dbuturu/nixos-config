@@ -126,57 +126,6 @@ let
     lsmod | grep nvidia || echo "No nvidia modules loaded"
   '';
 
-  lametricNotifyScript = pkgs.writeShellScriptBin "lametric-notify" ''
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # Source environment variables from ~/.env
-    if [ -f "$HOME/.env" ]; then
-      source "$HOME/.env"
-    fi
-
-    # Check if IP and API key are set
-    if [ -z "''${LAMETRIC_IP:-}" ]; then
-      notify-send -u critical "LaMetric Error" "LAMETRIC_IP is not set in ~/.env"
-      exit 1
-    fi
-    if [ -z "''${LAMETRIC_API_KEY:-}" ]; then
-      notify-send -u critical "LaMetric Error" "LAMETRIC_API_KEY is not set in ~/.env"
-      exit 1
-    fi
-    
-    # --- Script Logic ---
-    MESSAGE="$1"
-    # Default icon - see https://developer.lametric.com/icons for full list
-    ICON="a2867" # Notification icon (same as your working example)
-
-    # JSON payload for the LaMetric API with critical priority (required for dimmed mode)
-    JSON_PAYLOAD=" { \"priority\":\"critical\", \"model\": { \"frames\": [ { \"icon\":\"$ICON\", \"text\":\"$MESSAGE\"} ] } }"
-
-    # Send the notification using curl with timeout and error handling
-    echo "Sending notification to LaMetric at $LAMETRIC_IP..."
-    echo "JSON Payload: $JSON_PAYLOAD"
-    echo
-    echo "DEBUG: You can test manually with:"
-    echo "curl -X POST -u \"dev:$LAMETRIC_API_KEY\" -H \"Content-Type: application/json\" -d '$JSON_PAYLOAD' --connect-timeout 5 --max-time 10 --fail \"http://$LAMETRIC_IP:8080/api/v2/device/notifications\""
-    echo
-    
-    if curl -X POST \
-         -u "dev:$LAMETRIC_API_KEY" \
-         -H "Content-Type: application/json" \
-         -d "$JSON_PAYLOAD" \
-         --connect-timeout 5 \
-         --max-time 10 \
-         --fail \
-         --silent \
-         --show-error \
-         "http://$LAMETRIC_IP:8080/api/v2/device/notifications"; then
-      echo "✓ Notification sent successfully"
-    else
-      echo "✗ Failed to send notification (check network/credentials)"
-      exit 1
-    fi
-  '';
 
   # Script to create ~/.env file with user prompts
   createEnvScript = pkgs.writeShellScriptBin "create-env" ''
@@ -226,85 +175,6 @@ EOF
     echo "Environment file created at $ENV_FILE"
     echo "Variables will be available in new shell sessions."
     echo "Run 'source ~/.env' to load them in the current session."
-  '';
-
-  lametricMusicScript = pkgs.writeShellScriptBin "lametric-music" ''
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # Source environment variables from ~/.env
-    if [ -f "$HOME/.env" ]; then
-      source "$HOME/.env"
-    fi
-
-    # Check if IP and API key are set
-    if [ -z "''${LAMETRIC_IP:-}" ]; then
-      notify-send -u critical "LaMetric Error" "LAMETRIC_IP is not set in ~/.env"
-      exit 1
-    fi
-    if [ -z "''${LAMETRIC_API_KEY:-}" ]; then
-      notify-send -u critical "LaMetric Error" "LAMETRIC_API_KEY is not set in ~/.env"
-      exit 1
-    fi
-
-    COMMAND="''${1:-}"
-    if [ -z "$COMMAND" ]; then
-      echo "Usage: $0 {play|stop|next|prev}"
-      exit 1
-    fi
-
-    # Map commands to LaMetric radio API actions
-    case "$COMMAND" in
-      play)
-        ACTION="radio.play"
-        ;;
-      stop)
-        ACTION="radio.stop"
-        ;;
-      next)
-        ACTION="radio.next"
-        ;;
-      prev)
-        ACTION="radio.prev"
-        ;;
-      *)
-        echo "Invalid command: $COMMAND"
-        echo "Usage: $0 {play|stop|next|prev}"
-        exit 1
-        ;;
-    esac
-
-    # Get radio widget ID from the radio app
-    RESPONSE=$(curl -s -u "dev:$LAMETRIC_API_KEY" \
-      "http://$LAMETRIC_IP:8080/api/v2/device/apps/com.lametric.radio" 2>/dev/null)
-    
-    # Extract widget ID using grep and sed (more reliable than assuming position)
-    WIDGET_ID=$(echo "$RESPONSE" | grep -o '"widgets"[^}]*"[a-f0-9]\{32\}"' | grep -o '[a-f0-9]\{32\}' | head -1)
-
-    if [ -z "$WIDGET_ID" ]; then
-      notify-send -u critical "LaMetric Error" "Could not find radio widget ID. Response: $RESPONSE"
-      exit 1
-    fi
-
-    # JSON payload for the action
-    JSON_PAYLOAD="{\"id\":\"$ACTION\"}"
-
-    # Send the command
-    if curl -X POST \
-         -u "dev:$LAMETRIC_API_KEY" \
-         -H "Content-Type: application/json" \
-         -d "$JSON_PAYLOAD" \
-         --connect-timeout 5 \
-         --max-time 10 \
-         --fail \
-         --silent \
-         --show-error \
-         "http://$LAMETRIC_IP:8080/api/v2/device/apps/com.lametric.radio/widgets/$WIDGET_ID/actions"; then
-      echo "✓ Music command '$COMMAND' sent successfully"
-    else
-      echo "✗ Failed to send music command"
-      exit 1
-    fi
   '';
 
   # Service status indicator script
@@ -408,45 +278,6 @@ EOF
     fi
   '';
 
-  # Random wallpaper rotation script
-  wallpaperRotateScript = pkgs.writeShellScriptBin "wallpaper-rotate" ''
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    WALLPAPER_DIR="/home/lrabbets/nixos-config/wallpapers"
-    
-    # Check if wallpaper directory exists
-    if [ ! -d "$WALLPAPER_DIR" ]; then
-      echo "Error: Wallpaper directory $WALLPAPER_DIR not found"
-      exit 1
-    fi
-
-    # Get all image files (png, jpg, jpeg) from wallpaper directory
-    WALLPAPERS=()
-    while IFS= read -r -d $'\0' file; do
-      WALLPAPERS+=("$file")
-    done < <(find "$WALLPAPER_DIR" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) -print0)
-
-    # Check if any wallpapers found
-    if [ ''${#WALLPAPERS[@]} -eq 0 ]; then
-      echo "Error: No wallpaper files found in $WALLPAPER_DIR"
-      exit 1
-    fi
-
-    # Select random wallpaper
-    RANDOM_INDEX=$(($RANDOM % ''${#WALLPAPERS[@]}))
-    SELECTED_WALLPAPER="''${WALLPAPERS[$RANDOM_INDEX]}"
-
-    echo "Setting wallpaper to: $(basename "$SELECTED_WALLPAPER")"
-
-    # Set wallpaper using swww
-    if command -v swww >/dev/null 2>&1; then
-      swww img "$SELECTED_WALLPAPER" --transition-type grow --transition-pos center --transition-duration 2
-    else
-      echo "Error: swww not found"
-      exit 1
-    fi
-  '';
 
 
   # VPN quick connect/disconnect script
@@ -575,7 +406,55 @@ EOF
     echo
     echo "The environment will automatically load when you enter this directory."
   '';
-  
+
+  # Resolves relative to where scripts.nix is saved
+  wallpaperSource = ${config.home.homeDirectory}/Pictures/wallpapers;
+
+  # Build a self-contained runtime binary wrapper package
+  blend-wallpaper = pkgs.writeShellApplication {
+    name = "blend-wallpaper";
+    
+    # Declare runtime dependencies explicitly so Nix patches their absolute paths
+    runtimeInputs = [ pkgs.imagemagick pkgs.swww pkgs.coreutils pkgs.gnugrep ];
+
+    text = ''
+      WALL_DIR="${wallpaperSource}"
+      SUNRISE="$WALL_DIR/sunrise-001.jpg"
+      MIDDAY="$WALL_DIR/midday-001.jpg"
+      SUNSET="$WALL_DIR/sunset-001.jpg"
+      NIGHT="$WALL_DIR/night-001.jpg"
+      OUTPUT_WALL="/tmp/current_blended_wallpaper.jpg"
+
+      HOUR=$(date +"%-H")
+      MINUTE=$(date +"%-M")
+      CURRENT_MINS=$(( HOUR * 60 + MINUTE ))
+
+      MIN_07AM=$(( 7 * 60 ))
+      MIN_11AM=$(( 11 * 60 ))
+      MIN_04PM=$(( 16 * 60 ))
+      MIN_06PM=$(( 18 * 60 ))
+
+      if [ "$CURRENT_MINS" -ge "$MIN_07AM" ] && [ "$CURRENT_MINS" -lt "$MIN_11AM" ]; then
+          TOTAL_WINDOW=$(( MIN_11AM - MIN_07AM ))
+          ELAPSED=$(( CURRENT_MINS - MIN_07AM ))
+          PERCENT=$(( ELAPSED * 100 / TOTAL_WINDOW ))
+          INVERSE=$(( 100 - PERCENT ))
+          magick "$SUNRISE" "$MIDDAY" -blend "''${INVERSE}x''${PERCENT}" "$OUTPUT_WALL"
+      elif [ "$CURRENT_MINS" -ge "$MIN_11AM" ] && [ "$CURRENT_MINS" -lt "$MIN_04PM" ]; then
+          cp "$MIDDAY" "$OUTPUT_WALL"
+      elif [ "$CURRENT_MINS" -ge "$MIN_04PM" ] && [ "$CURRENT_MINS" -lt "$MIN_06PM" ]; then
+          TOTAL_WINDOW=$(( MIN_06PM - MIN_04PM ))
+          ELAPSED=$(( CURRENT_MINS - MIN_04PM ))
+          PERCENT=$(( ELAPSED * 100 / TOTAL_WINDOW ))
+          INVERSE=$(( 100 - PERCENT ))
+          magick "$MIDDAY" "$SUNSET" -blend "''${INVERSE}x''${PERCENT}" "$OUTPUT_WALL"
+      else
+          cp "$NIGHT" "$OUTPUT_WALL"
+      fi
+
+      swww img "$OUTPUT_WALL" --transition-type crossfade --transition-step 10 --transition-fps 30
+    '';
+  };
 in
 {
   # Add the script package to your user's profile
@@ -583,15 +462,13 @@ in
     screenshotScript
     findTempSensors
     waybarTempsScript
-    lametricNotifyScript
     createEnvScript
-    lametricMusicScript
-    wallpaperRotateScript
     serviceStatusScript
     musicVisualizerScript
     weatherScript
     waybarVpnScript
     vpnScript
     devInitScript
+    blend-wallpaper
   ];
 }
