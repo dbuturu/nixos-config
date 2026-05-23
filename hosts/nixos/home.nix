@@ -7,7 +7,7 @@
 
   # Home Manager configuration for user environment
   home-manager.users.dbuturu = {
-    import = [
+    imports = [
       
       # Core Global Plugins
       catppuccin.homeModules.catppuccin

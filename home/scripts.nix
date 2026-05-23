@@ -408,7 +408,7 @@ EOF
   '';
 
   # Resolves relative to where scripts.nix is saved
-  wallpaperSource = ${config.home.homeDirectory}/Pictures/wallpapers;
+  wallpaperSource = "$HOME/Pictures/Wallpapers";
 
   # Build a self-contained runtime binary wrapper package
   blend-wallpaper = pkgs.writeShellApplication {
