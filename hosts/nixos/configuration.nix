@@ -7,7 +7,7 @@
     ./system-packages.nix # System-wide packages
     # ./mounts.nix # Filesystem mount configuration
     ./home.nix # Home-manager configuration
-    ./sddm.nix # Greetd Display Manager Configuration
+    ./greeter.nix # Greetd Display Manager Configuration
     ./ollama.nix # Local AI model server (heavy build!)
   ];
 
