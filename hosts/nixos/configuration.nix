@@ -125,7 +125,7 @@
 
   # Home-Manager configuration - manages user environment
   home-manager = {
-    useGlobalP ekgs = true; # Use system nixpkgs
+    useGlobalPkgs = true; # Use system nixpkgs
     useUserPackages = true; # Install to user profile
     backupFileExtension = "backup"; # Backup existing files instead of failing
     extraSpecialArgs = { inherit pkgs-unstable theme; }; # Pass variables to home config

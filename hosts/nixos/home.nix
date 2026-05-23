@@ -6,7 +6,7 @@
   users.users.lrabbets.shell = pkgs.zsh;
 
   # Home Manager configuration for user environment
-  home-manager.users.lrabbets = {
+  home-manager.users.dbuturu = {
     import ../../home/default.nix
     # Global Catppuccin configuration
     catppuccin = {
