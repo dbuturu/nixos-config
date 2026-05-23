@@ -70,7 +70,7 @@
             { Text = '  COPY MODE  ' },
           }))
         else
-          window:set_right_status('')
+          window:set_right_status("")
         end
       end)
 
