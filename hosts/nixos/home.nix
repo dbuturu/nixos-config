@@ -7,7 +7,7 @@
 
   # Home Manager configuration for user environment
   home-manager.users.dbuturu = {
-    import ../../home/default.nix
+    import = [ ../../home/default.nix ];
     # Global Catppuccin configuration
     catppuccin = {
       enable = true;
