@@ -1,11 +1,11 @@
 # system-packages.nix - System-wide packages
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 {
   environment.systemPackages = with pkgs; [
     nfs-utils   # For NFS filesystem support
     cifs-utils  # For SMB/CIFS filesystem support
-    openvpn     # OpenVPN client for Surfshark
+    openvpn     # OpenVPN client
     wireguard-tools # WireGuard VPN tools
     networkmanagerapplet # GUI for NetworkManager VPN
     podman      # Container runtime
@@ -16,10 +16,15 @@
   ];
 
   # Podman configuration for rootless containers
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true; # Docker compatibility
-    defaultNetwork.settings.dns_enabled = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true; # Docker compatibility
+      defaultNetwork.settings.dns_enabled = true;
+    };
+
+    # Waydroid
+    waydroid.enable = true;
   };
 
   # System-wide font configuration for better rendering
@@ -53,5 +58,17 @@
       source-han-sans
       source-han-serif
     ];
+  };
+
+  programs = {
+    zsh.enable = true; # Enable Zsh system-wide
+  
+    ssh.startAgent = true;
+
+    # Hyprland window manager (Wayland-based)
+    # Note: Package version is managed in home/hyprland.nix via home-manager
+    hyprland.enable = true;
+    hyprland.portalPackage = pkgs-unstable.xdg-desktop-portal-hyprland;
+    hyprland.xwayland.enable = true; # X11 app compatibility
   };
 }

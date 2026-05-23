@@ -28,7 +28,7 @@
  
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, catppuccin, ... }@inputs: 
     let
-      theme = import ./theme/theme.nix;
+      theme = import ./host/nixos/theme/theme.nix;
       system = "x86_64-linux";
       
       # Import unstable packages with unfree software enabled

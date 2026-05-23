@@ -12,8 +12,10 @@
   ];
 
   # Bootloader - systemd-boot is simpler than GRUB
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 
   # Networking
   networking = {
@@ -104,6 +106,7 @@
       jack.enable = true;
     };
   };
+
   security.rtkit.enable = true; # Real-s scheduling for audio
 
   # Enable PAM authentication for screen locking
@@ -153,6 +156,7 @@
       options = "--delete-older-than 3d"; # Keep only last 3 days (very aggressive)
     };
   };
+
   nixpkgs.config.allowUnfree = true; # Allow proprietary software
   
   # Run user garbage collection alongside system cleanup
@@ -180,19 +184,6 @@
       RandomizedDelaySec = "1800"; # 30min random delay
       Persistent = true;
     };
-  };
-
-  programs = {
-    zsh.enable = true; # Enable Zsh system-wide
-  
-    # SSH agent disabled - using 1password agent instead
-    ssh.startAgent = false;
-
-    # Hyprland window manager (Wayland-based)
-    # Note: Package version is managed in home/hyprland.nix via home-manager
-    hyprland.enable = true;
-    hyprland.portalPackage = pkgs-unstable.xdg-desktop-portal-hyprland;
-    hyprland.xwayland.enable = true; # X11 app compatibility
   };
 
   # XDG Desktop Portal for proper Wayland app integration
@@ -225,9 +216,6 @@
     enable = true;
     enable32Bit = true; # Required for Wine/Steam Proton games
   };
-
-  # Waydroid
-  virtualisation.waydroid.enable = true;
 
   # Automatic system updates disabled - manual updates on Sundays
   system.autoUpgrade.enable = false;
