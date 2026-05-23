@@ -43,7 +43,7 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs pkgs-unstable theme catppuccin; }; # Pass variables to all modules
         modules = [
-          .hosts/nixos/configuration.nix # System-level configuration
+          ./hosts/nixos/configuration.nix # System-level configuration
           home-manager.nixosModules.home-manager # User environment management
           catppuccin.nixosModules.catppuccin # Catppuccin theming support
         ];
