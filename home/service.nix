@@ -1,5 +1,5 @@
 # home/services.nix
-{ pkgs, theme, ... }:
+{ pkgs, theme, config, ... }:
 
 {
   # -- User-level System Services --
@@ -34,7 +34,7 @@
     Service = {
       Type = "oneshot";
       # Executes the script directly out of your user's dynamic nix package profile
-      ExecStart = "blend-wallpaper";
+      ExecStart = "${config.home.profileDirectory}/bin/blend-wallpaper";
     };
   };
 
