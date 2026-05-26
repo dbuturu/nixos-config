@@ -3,7 +3,7 @@
 
 {
   # Set the default shell for the user at the system level
-  users.users.lrabbets.shell = pkgs.zsh;
+  users.users.dbuturu.shell = pkgs.zsh;
 
   # Home Manager configuration for user environment
   home-manager.users.dbuturu = {

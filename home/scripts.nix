@@ -329,7 +329,7 @@ EOF
     #!/usr/bin/env bash
     set -euo pipefail
 
-    TEMPLATE_DIR="/home/lrabbets/nixos-config/dev-templates"
+    TEMPLATE_DIR="/home/dbuturu/nixos-config/dev-templates"
     
     # Show usage if no arguments
     if [ $# -eq 0 ]; then
@@ -452,7 +452,7 @@ EOF
           cp "$NIGHT" "$OUTPUT_WALL"
       fi
 
-      swww img "$OUTPUT_WALL" --transition-type crossfade --transition-step 10 --transition-fps 30
+      swww img "$OUTPUT_WALL" --transition-type fade --transition-step 10 --transition-fps 30
     '';
   };
 in

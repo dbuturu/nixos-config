@@ -7,11 +7,11 @@ let
   # Function to format each keybinding line for display
   format-keybind = bind:
     let
-      # Split the line by comma, e.g., "$mainMod, RETURN, exec, kitty"
+      # Split the line by comma, e.g., "$mainMod, RETURN, exec, wezterm"
       parts = pkgs.lib.splitString "," bind;
       # Get the keys (first 2 parts), e.g., "$mainMod, RETURN"
       keys = pkgs.lib.concatStringsSep "," (pkgs.lib.take 2 parts);
-      # Get the action (the rest), e.g., "exec, kitty"
+      # Get the action (the rest), e.g., "exec, wezterm"
       action = pkgs.lib.concatStringsSep "," (pkgs.lib.drop 2 parts);
     in
     # Replace variables and format for readability
@@ -34,7 +34,7 @@ in # This is the end of the 'let' block and the start of your main config
     enable = true;
     package = pkgs-unstable.hyprland; # Use unstable (0.52+) for crash fixes
     plugins = [
-      pkgs-unstable.hyprlandPlugins.hy3
+      # pkgs-unstable.hyprlandPlugins.hy3
     ];
     settings = {
       monitor = ",preferred,auto,1";
@@ -54,7 +54,7 @@ in # This is the end of the 'let' block and the start of your main config
       exec-once = [ 
         "waybar"
         "swww-daemon"  # Initialize swww daemon
-        "wallpaper-rotate"  # Set random wallpaper at startup
+        "blend-wallpaper"  # Set random wallpaper at startup
         "wl-paste --type text --watch cliphist store"  # Start clipboard history daemon
         "wl-paste --type image --watch cliphist store"  # Store image clipboard items
         "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'"  # Set GTK dark theme
@@ -65,26 +65,26 @@ in # This is the end of the 'let' block and the start of your main config
       
       bind = [
         # -- App Launchers --
-        "$mainMod, RETURN, exec, kitty"
-        # "$mainMod SHIFT, RETURN, exec, kitty"
+        "$mainMod, RETURN, exec, wezterm"
+        # "$mainMod SHIFT, RETURN, exec, wezterm"
         "$mainMod, D, exec, wofi --show drun"
         # "$mainMod, D, exec, paswordmanger"        
         "$mainMod, N, exec, obsidian"
         "$mainMod, W, exec, firefox"
         "$mainMod, Escape, exec, hyprlock"
-        "$mainMod, R, exec, kitty yazi"
-        "$mainMod SHIFT, R, exec, kitty btop"
-        "$mainMod, E, exec, kitty neomutt"
-        "$mainMod SHIFT, E, exec, kitty abook"
-        "$mainMod, M, exec, kitty ncmpcpp"
-        "$mainMod SHIFT, N, exec, kitty newsboat"
-        "$mainMod SHIFT, W, exec, kitty nmtui"
+        "$mainMod, R, exec, wezterm yazi"
+        "$mainMod SHIFT, R, exec, wezterm btop"
+        "$mainMod, E, exec, wezterm neomutt"
+        "$mainMod SHIFT, E, exec, wezterm abook"
+        "$mainMod, M, exec, wezterm ncmpcpp"
+        "$mainMod SHIFT, N, exec, wezterm newsboat"
+        "$mainMod SHIFT, W, exec, wezterm nmtui"
         "$mainMod, BACKSPACE, exec, wlogout"
          
         # -- Function Keys --
         "$mainMod, F1, exec, hypr-keybinds"
-        "$mainMod, F4, exec, kitty pulsemixer"
-        "$mainMod, F8, exec, kitty mutt-wizard"
+        "$mainMod, F4, exec, wezterm pulsemixer"
+        "$mainMod, F8, exec, wezterm mutt-wizard"
         # "$mainMod, F9, exec, dmenumount"
         # "$mainMod, F10, exec, dmenuumount"
         "$mainMod, F11, exec, mpv av://v4l2:/dev/video0 --profile=low-latency --untimed"

@@ -61,9 +61,6 @@
       ncmpcpp            # Music player frontend
       ani-cli            # Anime player
     ])  ++
-    [
-     anipy-cli.packages.${pkgs.system}.default #Ainme player
-    ]++
     
     # Gaming (Unstable - Latest Compatibility)
     (with pkgs-unstable; [

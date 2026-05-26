@@ -19,17 +19,6 @@
       merge.conflictStyle = "diff3";
       rerere.enabled = true;
 
-      delta = {
-        enable = true;
-        options = {
-          navigate = true;
-          light = false;
-          side-by-side = true; # Gives you side-by-side terminal splits
-          line-numbers = true;
-          theme = "Catppuccin-mocha"; # Fits your desktop palette perfectly
-        };
-      };
-
       # Git aliases for common operations
       aliases = {
         # Pretty log formats
@@ -64,6 +53,17 @@
         sa = "stash apply";
         ss = "stash save";
       };
+    };
+  };
+
+  programs.delta = {
+    enable = true;
+    options = {
+      navigate = true;
+      light = false;
+      side-by-side = true; # Gives you side-by-side terminal splits
+      line-numbers = true;
+      theme = "Catppuccin-mocha"; # Fits your desktop palette perfectly
     };
   };
 }

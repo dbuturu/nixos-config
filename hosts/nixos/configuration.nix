@@ -8,7 +8,7 @@
     # ./mounts.nix # Filesystem mount configuration
     ./home.nix # Home-manager configuration
     ./greeter.nix # Greetd Display Manager Configuration
-    ./ollama.nix # Local AI model server (heavy build!)
+    # ./ollama.nix # Local AI model server (heavy build!)
   ];
 
   # Bootloader - systemd-boot is simpler than GRUB

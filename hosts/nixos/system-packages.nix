@@ -12,7 +12,7 @@
     podman-tui  # Terminal UI for Podman
     podman-compose # Docker Compose compatibility
     ghostscript # Required for CUPS print preview generation
-    poppler_utils # PDF conversion tools for print preview
+    poppler-utils # PDF conversion tools for print preview
   ];
 
   # Podman configuration for rootless containers
@@ -54,7 +54,7 @@
       inter # Better system font
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       source-han-sans
       source-han-serif
     ];
@@ -63,7 +63,7 @@
   programs = {
     zsh.enable = true; # Enable Zsh system-wide
   
-    ssh.startAgent = true;
+    #ssh.startAgent = true;
 
     # Hyprland window manager (Wayland-based)
     # Note: Package version is managed in home/hyprland.nix via home-manager

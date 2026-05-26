@@ -15,5 +15,5 @@
 
   # Grant user access to Ollama service
   # Note: User must also be added to "ollama" group in configuration.nix
-  users.users.lrabbets.extraGroups = [ "ollama" ];
+  users.users.dbuturu.extraGroups = [ "ollama" ];
 }

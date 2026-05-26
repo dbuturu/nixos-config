@@ -17,7 +17,7 @@
     ./git.nix
     ./direnv.nix
     ./cli-tools.nix
-    ./scripts.nix       # Exports our custom blend-wallpaper binary
+    ./scripts.nix 
 
     # Applications & Environments
     ./packages.nix
@@ -28,7 +28,7 @@
     # System Integration & Background Workers
     ./environment.nix
     ./default-apps.nix
-    ./service.nix       # References and schedules our custom binary
+    ./service.nix
     ./gtk.nix
   ];
 }

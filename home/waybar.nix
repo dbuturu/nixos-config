@@ -45,14 +45,14 @@
           "format-icons" = {
             "default" = [ "" "" "" ];
           };
-          "on-click" = "kitty -e wiremix";
+          "on-click" = "wezterm -e pulsemixer";
         };
 
         "network" = {
           "format-wifi" = "ᯤ";
           "format-ethernet" = "󰈀";
           "format-disconnected" = "󰌙";
-	  "on-click" = "kitty -e nmtui";
+	  "on-click" = "wezterm -e nmtui";
           "tooltip-format" = "{ifname}: {essid} via {gwaddr}";
         };
 
@@ -60,14 +60,14 @@
           "format" = "󰻠 {usage}%";
           "interval" = 5;
           "tooltip" = true;
-          "on-click" = "kitty -e btop";
+          "on-click" = "wezterm -e btop";
         };
 
         "memory" = {
           "format" = "󰍛 {}%";
           "interval" = 10;
           "tooltip" = true;
-          "on-click" = "kitty -e bash -c 'free -h; read'";
+          "on-click" = "wezterm -e bash -c 'free -h; read'";
         };
 
         "custom/temps" = {
@@ -76,7 +76,7 @@
           "interval" = 10;
           "tooltip" = true;
           "tooltip-format" = "CPU and GPU Temperatures";
-          "on-click" = "kitty -e bash -c 'sensors; read'";
+          "on-click" = "wezterm -e bash -c 'sensors; read'";
         };
 
         "custom/services" = {
@@ -85,7 +85,7 @@
           "interval" = 30;
           "tooltip" = true;
           "tooltip-format" = "Service Status (🤖=Ollama)";
-          "on-click" = "kitty -e bash -c 'systemctl --no-pager status ollama; read'";
+          "on-click" = "wezterm -e bash -c 'systemctl --no-pager status ollama; read'";
         };
 
 
@@ -105,7 +105,7 @@
           "interval" = 5;
           "tooltip" = true;
           "tooltip-format" = "VPN Status - Click to toggle";
-          "on-click" = "kitty -e bash -c 'if nmcli connection show --active | grep -q be-bru.prod.surfshark.comsurfshark_openvpn_udp; then vpn disconnect; else vpn connect; fi; read'";
+          "on-click" = "wezterm -e bash -c 'if nmcli connection show --active | grep -q be-bru.prod.surfshark.comsurfshark_openvpn_udp; then vpn disconnect; else vpn connect; fi; read'";
         };
         
         "clock" = {
@@ -148,7 +148,7 @@
 	  "tooltip-format-connected" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
 	  "tooltip-format-enumerate-connected" = "{device_alias}\t{device_address}";
 	  "tooltip-format-enumerate-connected-battery" = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
-	  "on-click" = "kitty -e bluetui";
+	  "on-click" = "wezterm -e bluetui";
         };
         
         "tray" = {

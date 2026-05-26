@@ -70,8 +70,8 @@
       
       # Security settings
       "DisablePasswordReveal" = true;
-      "PasswordManagerEnabled" = false; # Since we use 1Password
-      
+      "PasswordManagerEnabled" = true;      
+
       # Extension management
       "ExtensionSettings" = {
         # uBlock Origin for ad blocking (similar to Brave's built-in blocker)
