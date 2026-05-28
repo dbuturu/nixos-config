@@ -1,5 +1,5 @@
 # home/shell.nix
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   # Zsh Configuration
@@ -60,21 +60,22 @@
       v = "$EDITOR";
       xq = "xbps-query";
       z = "zathura";
+    };
 
-      # Directory aliases
-      cac = "cd \${XDG_CACHE_HOME:-$HOME/.cache}";
-      cf = "cd \${XDG_CONFIG_HOME:-$HOME/.config}";
-      D = "cd \${XDG_DOWNLOAD_DIR:-$HOME/Downloads}";
-      d = "cd \${XDG_DOCUMENTS_DIR:-$HOME/Documents}";
-      dt = "cd \${XDG_DATA_HOME:-$HOME/.local/share}";
-      rr = "cd $HOME/.local/src";
-      h = "cd $HOME";
-      m = "cd \${XDG_MUSIC_DIR:-$HOME/Music}";
-      mn = "cd /mnt";
-      pp = "cd \${XDG_PICTURES_DIR:-$HOME/Pictures}";
-      sc = "cd $HOME/.local/bin";
-      src = "cd $HOME/.local/src";
-      vv = "cd \${XDG_VIDEOS_DIR:-$HOME/Videos}";
+    dirHashes = {
+      cac = "${config.xdg.cacheHome}";
+      cf  = "${config.xdg.configHome}";
+      D   = "${config.home.homeDirectory}/Downloads";
+      d   = "${config.home.homeDirectory}/Documents";
+      dt  = "${config.xdg.dataHome}";
+      rr  = "${config.home.homeDirectory}/.local/src";
+      h   = "${config.home.homeDirectory}";
+      m   = "${config.home.homeDirectory}/Music";
+      mn  = "/mnt";
+      pp  = "${config.home.homeDirectory}/Pictures";
+      sc  = "${config.home.homeDirectory}/.local/bin";
+      src = "${config.home.homeDirectory}/.local/src";
+      vv  = "${config.home.homeDirectory}/Videos";
     };
 
     # Oh My Zsh provides themes and plugins for zsh
