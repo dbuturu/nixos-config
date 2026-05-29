@@ -24,9 +24,16 @@
 
     # Catppuccin theming for comprehensive application support
     catppuccin.url = "github:catppuccin/nix/d75e3fe67f49728cb5035bc791f4b9065ff3a2c9";
+
+    hyprland.url = "github:hyprwm/Hyprland";
+
+    hy3 = {
+      url = "github:outfoxxed/hy3";
+      inputs.hyprland.follows = "hyprland"; # Prevents crashing from version mismatch
+    };
   };
  
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, catppuccin, ... }@inputs: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, catppuccin, hyprland, hy3, ... }@inputs: 
     let
       theme = import ./hosts/nixos/theme/theme.nix;
       system = "x86_64-linux";
@@ -41,7 +48,7 @@
     nixosConfigurations = {
       "nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs pkgs-unstable theme catppuccin; }; # Pass variables to all modules
+        specialArgs = { inherit inputs pkgs-unstable theme catppuccin hyprland hy3; }; # Pass variables to all modules
         modules = [
           ./hosts/nixos/configuration.nix # System-level configuration
           home-manager.nixosModules.home-manager # User environment management

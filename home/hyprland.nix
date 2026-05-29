@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, config, inputs, ...}:
+{ pkgs, pkgs-unstable, config, hyprland, hy3, ...}:
 
 let
   # Self-referencing: access our own config to generate a help script
@@ -32,9 +32,9 @@ in # This is the end of the 'let' block and the start of your main config
     # This is the single source of truth for Hyprland version and settings
     wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs-unstable.hyprland; # Use unstable (0.52+) for crash fixes
+    package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland; # Use unstable (0.52+) for crash fixes
     plugins = [
-      # pkgs-unstable.hyprlandPlugins.hy3
+      hy3.packages.${pkgs.stdenv.hostPlatform.system}.hy3
     ];
     settings = {
       monitor = ",preferred,auto,1";
@@ -165,7 +165,7 @@ in # This is the end of the 'let' block and the start of your main config
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-        # layout = "hy3";
+        layout = "hy3";
         allow_tearing = true; # Reduces input lag for gaming
         # Border colors will be set by Catppuccin theme
       };

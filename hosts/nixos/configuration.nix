@@ -1,5 +1,5 @@
 # configuration.nix
-{ config, pkgs, pkgs-unstable, theme, ... }:
+{ config, pkgs, pkgs-unstable, theme, hyprland, hy3,... }:
 
 {
   imports = [
@@ -128,7 +128,7 @@
     useGlobalPkgs = true; # Use system nixpkgs
     useUserPackages = true; # Install to user profile
     backupFileExtension = "backup"; # Backup existing files instead of failing
-    extraSpecialArgs = { inherit pkgs-unstable theme; }; # Pass variables to home config
+    extraSpecialArgs = { inherit pkgs-unstable theme hyprland hy3; }; # Pass variables to home config
     users.dbuturu = { ... }: {
       # User configuration defined in home.nix
     };
