@@ -1,5 +1,5 @@
 # home/waybar.nix
-{pkgs, pkgs-unstable, theme, ...}:
+{ pkgs, pkgs-unstable, ... }:
 {
   programs.waybar = {
     enable = true;
@@ -11,22 +11,28 @@
         height = 36;
         spacing = 4;
         reload_style_on_change = true;
-        modules-left = [ "hyprland/workspaces" "mpris" "custom/music-viz" ];
-        modules-center = [ "hyprland/window" ];
+        
+        # Swapped "hyprland/workspaces" for "river/tags"
+        modules-left = [ "river/tags" "mpris" "custom/music-viz" ];
+        # Swapped "hyprland/window" for "river/window"
+        modules-center = [ "river/window" ];
         modules-right = [ "custom/services" "custom/vpn" "pulseaudio" "network" "bluetooth" "cpu" "memory" "custom/temps" "battery" "clock" "tray" ];
 
-        "hyprland/workspaces" = {
-          "format" = "{id}";
-          "on-click" = "activate";
-          "sort-by-number" = true;
+        # ----------------------------------------------------------------
+        # River Specific Monitoring Modules
+        # ----------------------------------------------------------------
+        "river/tags" = {
+          "num-tags" = 9;
         };
         
-        "hyprland/window" = {
+        "river/window" = {
           "format" = "{}";
-          "separate-outputs" = true;
           "max-length" = 50;
         };
 
+        # ----------------------------------------------------------------
+        # Restored Applications & Metrics Pipeline (Carried over exactly)
+        # ----------------------------------------------------------------
         "mpris" = {
           "format" = "{player_icon}";
           "format-paused" = "";
@@ -43,7 +49,7 @@
           "format" = "{icon} {volume}%";
           "format-muted" = " Muted";
           "format-icons" = {
-            "default" = [ "" "" "" ];
+            "default" = [ "󰕾" "󰕾" "󰕾" ];
           };
           "on-click" = "wezterm -e pulsemixer";
         };
@@ -52,7 +58,7 @@
           "format-wifi" = "ᯤ";
           "format-ethernet" = "󰈀";
           "format-disconnected" = "󰌙";
-	  "on-click" = "wezterm -e nmtui";
+          "on-click" = "wezterm -e nmtui";
           "tooltip-format" = "{ifname}: {essid} via {gwaddr}";
         };
 
@@ -87,7 +93,6 @@
           "tooltip-format" = "Service Status (🤖=Ollama)";
           "on-click" = "wezterm -e bash -c 'systemctl --no-pager status ollama; read'";
         };
-
 
         "custom/music-viz" = {
           "exec" = "waybar-music-viz";
@@ -139,29 +144,29 @@
           "format-icons" = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
         };
 
-	"bluetooth" = {
-	  "format" = " {status}";
-	  "format-connected" = " {device_alias}";
-	  "format-connected-battery" = " {device_alias} {device_battery_percentage}%";
-	  # "format-device-preference" = [ "device1", "device2" ] // preference list deciding the displayed device
-	  "tooltip-format" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
-	  "tooltip-format-connected" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
-	  "tooltip-format-enumerate-connected" = "{device_alias}\t{device_address}";
-	  "tooltip-format-enumerate-connected-battery" = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
-	  "on-click" = "wezterm -e bluetui";
+        "bluetooth" = {
+          "format" = " {status}";
+          "format-connected" = " {device_alias}";
+          "format-connected-battery" = " {device_alias} {device_battery_percentage}%";
+          "tooltip-format" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+          "tooltip-format-connected" = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+          "tooltip-format-enumerate-connected" = "{device_alias}\t{device_address}";
+          "tooltip-format-enumerate-connected-battery" = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+          "on-click" = "wezterm -e bluetui";
         };
-        
+
         "tray" = {
           "icon-size" = 16;
           "spacing" = 10;
         };
-
       };
     };
-    # Clean and elegant styling with Catppuccin
+
+    # ----------------------------------------------------------------
+    # Refined Styling Layer with Native Dynamic Tag-Folding CSS
+    # ----------------------------------------------------------------
     style = ''
       @import "catppuccin.css";
-      
       * {
         font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Inter", "Noto Sans", sans-serif;
         font-size: 14px;
@@ -176,20 +181,30 @@
         padding: 4px 8px;
       }
 
-      #workspaces button {
+      /* Base layout rendering configurations for River tags */
+      #tags button {
         padding: 4px 8px;
         margin: 4px 2px;
         background: transparent;
         color: @subtext0;
       }
 
-      #workspaces button.active {
+      /* FIX: Use pure GTK CSS mechanics to securely collapse unused elements */
+      #tags button:not(.focused):not(.occupied) {
+        margin: 0;
+	padding: 0;
+	min-width: 0;
+	font-size: 0px;
+	opacity: 0;
+      }
+      
+      #tags button.focused {
         background: @mauve;
         color: @base;
         border-radius: 4px;
       }
 
-      #workspaces button:hover {
+      #tags button:hover {
         background: @surface1;
         color: @text;
         border-radius: 4px;
@@ -231,7 +246,6 @@
     '';
   };
 
-  # Enable Catppuccin theming for Waybar
   catppuccin.waybar = {
     enable = true;
     mode = "createLink";

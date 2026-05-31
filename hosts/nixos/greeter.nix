@@ -2,16 +2,16 @@
 { config, pkgs, ... }:
 
 let
-  # Hyprland session wrapper
-  hyprland-session = pkgs.writeShellScriptBin "hyprland-session" ''
+  # River session wrapper
+  river-session = pkgs.writeShellScriptBin "river-session" ''
     export XDG_SESSION_TYPE=wayland
-    export XDG_SESSION_DESKTOP=Hyprland
-    export XDG_CURRENT_DESKTOP=Hyprland
+    export XDG_SESSION_DESKTOP=river
+    export XDG_CURRENT_DESKTOP=river
     export XKB_DEFAULT_LAYOUT=jp
     export XKB_DEFAULT_MODEL=jp106
     
-    # Start Hyprland
-    exec ${pkgs.hyprland}/bin/Hyprland
+    # Start river
+    exec systemd-cat -t river ${pkgs.river-classic}/bin/river
   '';
 in
 {
@@ -24,7 +24,7 @@ in
     settings = {
       default_session = {
         # Use tuigreet (TUI greeter)
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --cmd ${hyprland-session}/bin/hyprland-session";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --cmd ${river-session}/bin/river-session";
         user = "greeter";
       };
     };

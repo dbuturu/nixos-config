@@ -5,7 +5,7 @@
   imports = [
 
     # Desktop Environment & Compositor Core
-    ./hyprland.nix
+    ./wm.nix
     ./waybar.nix
     ./wofi.nix
     ./wlogout.nix

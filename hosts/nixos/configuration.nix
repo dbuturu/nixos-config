@@ -9,6 +9,7 @@
     ./home.nix # Home-manager configuration
     ./greeter.nix # Greetd Display Manager Configuration
     # ./ollama.nix # Local AI model server (heavy build!)
+    ./portal.nix
   ];
 
   # Bootloader - systemd-boot is simpler than GRUB
@@ -185,16 +186,6 @@
       Persistent = true;
     };
   };
-
-  # XDG Desktop Portal for proper Wayland app integration
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-    ];
-    config.common.default = "*";
-  };
-
 
   # NVIDIA driver configuration
   hardware.nvidia = {

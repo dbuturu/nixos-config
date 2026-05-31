@@ -13,6 +13,10 @@
       package = pkgs.bibata-cursors;
       size = 24;
     };
+
+    theme.name = "Adwaita-dark";
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
+    gtk4.extraConfig.gtk-application-prefer-dark-theme = true;
   };
 
   # Tell libadwaita applications (like Loupe and Shortwave) to prefer the dark theme.
