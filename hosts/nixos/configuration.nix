@@ -1,14 +1,12 @@
 # configuration.nix
-{ config, pkgs, pkgs-unstable, theme, hyprland, hy3,... }:
+{ config, pkgs, pkgs-unstable, theme, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix # Auto-generated hardware config
     ./system-packages.nix # System-wide packages
-    # ./mounts.nix # Filesystem mount configuration
     ./home.nix # Home-manager configuration
     ./greeter.nix # Greetd Display Manager Configuration
-    # ./ollama.nix # Local AI model server (heavy build!)
     ./portal.nix
   ];
 
@@ -105,6 +103,18 @@
       alsa.support32Bit = true; # 32-bit app support
       pulse.enable = true; # PulseAudio compatibility
       jack.enable = true;
+      wireplumber.extraConfig = {
+        "10-default-volumes" = {
+	  "wireplumber.settings" = {
+	    # Lower default volume for newly connected audio hardware sinks
+	    "device.routes.default-sink-volume" = 0.7;
+	    # Lower baseline volume for completely new app streams
+	    "node.stream.default-playback-volume" = 0.7;
+	    # Ensure it saves individual app volume settings aggressively
+	    "node.stream.restore-props" = true;
+	  };
+	};
+      };
     };
   };
 
@@ -129,7 +139,7 @@
     useGlobalPkgs = true; # Use system nixpkgs
     useUserPackages = true; # Install to user profile
     backupFileExtension = "backup"; # Backup existing files instead of failing
-    extraSpecialArgs = { inherit pkgs-unstable theme hyprland hy3; }; # Pass variables to home config
+    extraSpecialArgs = { inherit pkgs-unstable theme; }; # Pass variables to home config
     users.dbuturu = { ... }: {
       # User configuration defined in home.nix
     };

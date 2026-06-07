@@ -2,25 +2,39 @@
 { lib, pkgs, ... }:
 
 {
-  # GTK Theme Configuration
+  # 1. Global Pointer Configuration (Fixes XWayland vs Native cursor alignment)
+  home.pointerCursor = {
+    enable = true;
+    gtk.enable = true;
+    x11.enable = true; # Generates the XWayland / legacy fallback paths
+    name = "Bibata-Modern-Classic";
+    package = pkgs.bibata-cursors;
+    size = 24;
+  };
+
+  # 2. GTK Theme Configuration
   gtk = {
     enable = true;
 
     # iconTheme managed by Catppuccin kvantum module
 
-    cursorTheme = {
-      name = "Bibata-Modern-Classic";
-      package = pkgs.bibata-cursors;
-      size = 24;
+    # (Note: cursorTheme inside gtk is omitted now as home.pointerCursor handles it)
+
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra; # Ensures the Adwaita-dark assets are explicitly present
     };
 
-    theme.name = "Adwaita-dark";
-    gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
-    gtk4.extraConfig.gtk-application-prefer-dark-theme = true;
+    # Changed from 'true' to 1 to match native GTK configuration specifications
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
   };
 
-  # Tell libadwaita applications (like Loupe and Shortwave) to prefer the dark theme.
-  # This uses dconf, a configuration system for GNOME apps.
+  # Tell libadwaita applications to prefer the dark theme.
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       "color-scheme" = "prefer-dark";

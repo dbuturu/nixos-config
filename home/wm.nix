@@ -178,22 +178,6 @@ let
     # ----------------------------------------------------------------
     wait
 
-  '';
-in {
-  home.packages = with pkgs; [
-    river-classic
-    riverInit
-    wideriverPackage
-    xdg-desktop-portal xdg-desktop-portal-wlr
-    # NOTE: brightnessctl cliphist blend-wallpaper grim mpv slurp swww wofi wl-clipboard wlogout wezterm are install and managed is other files.
-  ];
-
-  # Deploys your generated nix executable script directly to River's initialization path
-  xdg.configFile."river/init" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env sh
-      exec ${riverInit}/bin/river-init
       waybar &
       swww-daemon &
       blend-wallpaper &
@@ -218,6 +202,22 @@ in {
 	--border-color-unfocused       "0x444444" \
 	--border-color-focused-monocle "0x005577" \
 	--log-threshold                WARNING &
+  '';
+in {
+  home.packages = with pkgs; [
+    river-classic
+    riverInit
+    wideriverPackage
+    xdg-desktop-portal xdg-desktop-portal-wlr
+    # NOTE: brightnessctl cliphist blend-wallpaper grim mpv slurp swww wofi wl-clipboard wlogout wezterm are install and managed is other files.
+  ];
+
+  # Deploys your generated nix executable script directly to River's initialization path
+  xdg.configFile."river/init" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env sh
+      exec ${riverInit}/bin/river-init
     '';
   };
 }

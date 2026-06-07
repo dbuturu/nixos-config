@@ -6,6 +6,10 @@
     # Wayland compatibility (moved from system environment.nix for user context)
     MOZ_ENABLE_WAYLAND = "1";       # Firefox uses Wayland
     NIXOS_OZONE_WL = "1";           # Chromium/Electron use Wayland
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
+    SAL_USE_VCLPLUGIN = "gtk3";
+    XCURSOR_THEME = "Adwaita"; # Or whichever theme you have installed
+    XCURSOR_SIZE = "24";
 
     # Dark mode theming
     GTK_THEME = "Adwaita:dark";
