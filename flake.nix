@@ -1,6 +1,6 @@
 {
   description = "Dbuturu's NixOS Configuration";
-  
+
   # Binary cache configuration for CUDA packages
   nixConfig = {
     extra-substituters = [
@@ -13,42 +13,49 @@
 
   inputs = {
     # Stable release branch for reliable system packages
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11"; 
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     # Unstable branch for latest packages (Firefox, development tools, etc.)
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs"; # Use same nixpkgs version for consistency
     };
 
     # Catppuccin theming for comprehensive application support
-    catppuccin.url = "github:catppuccin/nix/d75e3fe67f49728cb5035bc791f4b9065ff3a2c9";
+    catppuccin.url = "github:catppuccin/nix";
 
-    hyprland.url = "github:hyprwm/Hyprland";
-
-    hy3 = {
-      url = "github:outfoxxed/hy3";
-      inputs.hyprland.follows = "hyprland"; # Prevents crashing from version mismatch
-    };
+    nixvim.url = "github:dbuturu/nixvim";
   };
- 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, catppuccin, hyprland, hy3, ... }@inputs: 
-    let
-      theme = import ./hosts/nixos/theme/theme.nix;
-      system = "x86_64-linux";
-      
-      # Import unstable packages with unfree software enabled
-      pkgs-unstable = import nixpkgs-unstable {
-        inherit system;
-        config.allowUnfree = true; # Allow proprietary software like Steam, Discord, etc.
-      };
-    in
-  {
+
+  outputs = {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    home-manager,
+    catppuccin,
+    ...
+  } @ inputs: let
+    theme = import ./hosts/nixos/theme/theme.nix;
+    system = "x86_64-linux";
+
+    # Import unstable packages with unfree software enabled
+    pkgs-unstable = import nixpkgs-unstable {
+      inherit system;
+      config.allowUnfree = true; # Allow proprietary software like Steam, Discord, etc.
+    };
+  in {
     nixosConfigurations = {
       "nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs pkgs-unstable theme catppuccin hyprland hy3; }; # Pass variables to all modules
+        specialArgs = {
+          inherit
+            inputs
+            pkgs-unstable
+            theme
+            catppuccin
+            ;
+        }; # Pass variables to all modules
         modules = [
           ./hosts/nixos/configuration.nix # System-level configuration
           home-manager.nixosModules.home-manager # User environment management

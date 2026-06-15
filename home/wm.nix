@@ -2,10 +2,7 @@
 #
 # River window manager — configured to mirror LukeSmith's DWM layout.
 # Layout engine: wideriver (left/right/top/monocle/wide, from nixpkgs)
-
-{ pkgs, ... }:
-
-let
+{pkgs, ...}: let
   wideriverPackage = pkgs.wideriver;
 
   # Nix completely handles the pure store-path shebang generation here!
@@ -127,16 +124,54 @@ let
     riverctl map normal $MOD+Shift l  send-layout-cmd wideriver "--count -1" &
 
     # Window State Triggers
-    riverctl map normal $MOD       f            toggle-fullscreen &
+    # riverctl map normal $MOD       f            toggle-fullscreen &
     riverctl map normal $MOD+Shift Space        toggle-float &
 
     # Dynamic layout engine selectors
+    # ==============================================================================
+    # LAYOUT & WINDOW MANAGEMENT BINDINGS (wideriver)
+    # ==============================================================================
+
+    # Mod+t – Tiling mode (Master left, stack right)
+    riverctl map normal $MOD t send-layout-cmd wideriver "--layout left --stack diminish" &
+
+    # Mod+T (Mod+Shift+t) – Bottom stack mode (Master top, stack bottom)
+    riverctl map normal $MOD+Shift T send-layout-cmd wideriver "--layout top --stack diminish" &
+
+    # Mod+f – Toggle Fullscreen mode
+    riverctl map normal $MOD f toggle-fullscreen &
+
+    # Mod+F (Mod+Shift+f) – Toggle Floating mode
+    # riverctl map normal $MOD+Shift F send-layout-cmd wideriver "--layout none" &
+
+    # Mod+y – Fibonacci Spiral mode (Dwindle variant with continuous splitting)
+    # riverctl map normal $MOD y send-layout-cmd wideriver "--layout spiral" &
+
+    # Mod+Y (Mod+Shift+y) – Dwindle mode (Alternating grid layout)
+    riverctl map normal $MOD+Shift Y send-layout-cmd wideriver "--layout left --stack dwindle" &
+
+    # Mod+u – Master on left, stack windows in monocle mode behind it
+    riverctl map normal $MOD u send-layout-cmd wideriver "--layout left --stack monocle" &
+
+    # Mod+U (Mod+Shift+u) – Pure Monocle mode (All windows maximized within the tag)
+    riverctl map normal $MOD+Shift U send-layout-cmd wideriver "--layout monocle" &
+
+    # Mod+i – Center the master window flanked by stack columns
+    riverctl map normal $MOD i send-layout-cmd wideriver "--layout wide --wide-first mid --stack diminish" &
+
+    # Mod+I (Mod+Shift+i) – Center and float the master window (Keeps stack tiled underneath)
+    # riverctl map normal $MOD+Shift I send-layout-cmd wideriver "--layout monocle --ratio 0.6" &
+
+    # Mod+o / Mod+O (Mod+Shift+o) – Increase/decrease number of master windows
+    riverctl map normal $MOD o send-layout-cmd wideriver "--master-count +1" &
+    riverctl map normal $MOD+Shift O send-layout-cmd wideriver "--master-count -1" &
+
     riverctl map normal $MOD         Space      send-layout-cmd wideriver "--layout-toggle" &
-    riverctl map normal $MOD+Control m          send-layout-cmd wideriver "--layout monocle" &
-    riverctl map normal $MOD+Control r          send-layout-cmd wideriver "--layout right" &
-    riverctl map normal $MOD+Control t          send-layout-cmd wideriver "--layout top" &
-    riverctl map normal $MOD+Control b          send-layout-cmd wideriver "--layout bottom" &
-    riverctl map normal $MOD+Control w          send-layout-cmd wideriver "--layout wide" &
+    # riverctl map normal $MOD+Control m          send-layout-cmd wideriver "--layout monocle" &
+    # riverctl map normal $MOD+Control r          send-layout-cmd wideriver "--layout right" &
+    # riverctl map normal $MOD+Control t          send-layout-cmd wideriver "--layout top" &
+    # riverctl map normal $MOD+Control b          send-layout-cmd wideriver "--layout bottom" &
+    # riverctl map normal $MOD+Control w          send-layout-cmd wideriver "--layout wide" &
 
     # ----------------------------------------------------------------
     # 7. Multi-Monitor Profiles
@@ -164,8 +199,8 @@ let
     riverctl map normal None XF86MonBrightnessDown  spawn "${pkgs.brightnessctl}/bin/brightnessctl set 5%-" &
 
     # Screenshots
-    riverctl map normal None Print  spawn screenshot full &
-    riverctl map normal Shift Print spawn screenshot select &
+    riverctl map normal None Print  spawn "screenshot full" &
+    riverctl map normal Shift Print spawn "screenshot select" &
 
 
     # ----------------------------------------------------------------
@@ -178,37 +213,38 @@ let
     # ----------------------------------------------------------------
     wait
 
-      waybar &
-      swww-daemon &
-      blend-wallpaper &
-      wl-paste --type text --watch cliphist store &
-      wl-paste --type image --watch cliphist store &
-      gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' &
-      gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' &
-      # wideriver layout provider startup execution parameters
-      riverctl default-layout wideriver
-      ${wideriverPackage}/bin/wideriver \
-        --layout                       left \
-	--layout-alt                   monocle \
-	--stack                        dwindle \
-	--count-master                 1 \
-	--ratio-master                 0.50 \
-	--inner-gaps                   4 \
-	--outer-gaps                   4 \
-	--smart-gaps \
-	--border-width                 2 \
-	--border-width-monocle         0 \
-	--border-color-focused         "0x005577" \
-	--border-color-unfocused       "0x444444" \
-	--border-color-focused-monocle "0x005577" \
-	--log-threshold                WARNING &
+    waybar &
+    awww-daemon &
+    blend-wallpaper &
+    wl-paste --type text --watch cliphist store &
+    wl-paste --type image --watch cliphist store &
+    gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' &
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' &
+    # wideriver layout provider startup execution parameters
+    riverctl default-layout wideriver
+    ${wideriverPackage}/bin/wideriver \
+      --layout                       left \
+      --layout-alt                   monocle \
+      --stack                        dwindle \
+      --count-master                 1 \
+      --ratio-master                 0.50 \
+      --inner-gaps                   4 \
+      --outer-gaps                   4 \
+      --smart-gaps \
+      --border-width                 2 \
+      --border-width-monocle         0 \
+      --border-color-focused         "0x005577" \
+      --border-color-unfocused       "0x444444" \
+      --border-color-focused-monocle "0x005577" \
+      --log-threshold                WARNING &
   '';
 in {
   home.packages = with pkgs; [
     river-classic
     riverInit
     wideriverPackage
-    xdg-desktop-portal xdg-desktop-portal-wlr
+    xdg-desktop-portal
+    xdg-desktop-portal-wlr
     # NOTE: brightnessctl cliphist blend-wallpaper grim mpv slurp swww wofi wl-clipboard wlogout wezterm are install and managed is other files.
   ];
 

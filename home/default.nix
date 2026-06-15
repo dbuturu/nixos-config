@@ -22,7 +22,7 @@
     # Applications & Environments
     ./packages.nix
     ./browsers.nix
-    ./neovim.nix
+    # ./neovim.nix
     ./wezterm.nix
 
     # System Integration & Background Workers

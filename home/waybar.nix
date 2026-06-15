@@ -1,6 +1,5 @@
 # home/waybar.nix
-{ pkgs, pkgs-unstable, ... }:
-{
+{pkgs-unstable, ...}: {
   programs.waybar = {
     enable = true;
     package = pkgs-unstable.waybar;
@@ -11,12 +10,28 @@
         height = 36;
         spacing = 4;
         reload_style_on_change = true;
-        
-        # Swapped "hyprland/workspaces" for "river/tags"
-        modules-left = [ "river/tags" "mpris" "custom/music-viz" ];
-        # Swapped "hyprland/window" for "river/window"
-        modules-center = [ "river/window" ];
-        modules-right = [ "custom/services" "custom/vpn" "pulseaudio" "network" "bluetooth" "cpu" "memory" "custom/temps" "battery" "clock" "tray" ];
+
+        modules-left = [
+          "river/tags"
+          "river/layout"
+          "mpris"
+          "custom/music-viz"
+        ];
+        modules-center = ["river/window"];
+        modules-right = [
+          "custom/services"
+          "custom/vpn"
+          "pulseaudio"
+          "network"
+          "bluetooth"
+          "cpu"
+          "memory"
+          "custom/temps"
+          "battery"
+          "custom/weather"
+          "clock"
+          "tray"
+        ];
 
         # ----------------------------------------------------------------
         # River Specific Monitoring Modules
@@ -24,10 +39,16 @@
         "river/tags" = {
           "num-tags" = 9;
         };
-        
+
         "river/window" = {
           "format" = "{}";
           "max-length" = 50;
+        };
+
+        "river/layout" = {
+          "format" = "{}";
+          "min-length" = 4;
+          "align" = "right";
         };
 
         # ----------------------------------------------------------------
@@ -49,7 +70,11 @@
           "format" = "{icon} {volume}%";
           "format-muted" = " Muted";
           "format-icons" = {
-            "default" = [ "󰕾" "󰕾" "󰕾" ];
+            "default" = [
+              "󰕾"
+              "󰕾"
+              "󰕾"
+            ];
           };
           "on-click" = "wezterm -e pulsemixer";
         };
@@ -112,7 +137,7 @@
           "tooltip-format" = "VPN Status - Click to toggle";
           "on-click" = "wezterm -e bash -c 'if nmcli connection show --active | grep -q be-bru.prod.surfshark.comsurfshark_openvpn_udp; then vpn disconnect; else vpn connect; fi; read'";
         };
-        
+
         "clock" = {
           "format" = " {:%H:%M}";
           "tooltip-format" = "<big>{:%A, %d %B %Y}</big>\n<tt><small>{calendar}</small></tt>";
@@ -141,7 +166,18 @@
           "format-charging" = "󰂄 {capacity}%";
           "format-plugged" = "󰂄 {capacity}%";
           "format-alt" = "{time} {icon}";
-          "format-icons" = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+          "format-icons" = [
+            "󰁺"
+            "󰁻"
+            "󰁼"
+            "󰁽"
+            "󰁾"
+            "󰁿"
+            "󰂀"
+            "󰂁"
+            "󰂂"
+            "󰁹"
+          ];
         };
 
         "bluetooth" = {
@@ -153,6 +189,14 @@
           "tooltip-format-enumerate-connected" = "{device_alias}\t{device_address}";
           "tooltip-format-enumerate-connected-battery" = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
           "on-click" = "wezterm -e bluetui";
+        };
+
+        "custom/weather" = {
+          "format" = "{}";
+          "interval" = 1800;
+          "exec" = "waybar-weather";
+          "return-type" = "";
+          "tooltip" = false;
         };
 
         "tray" = {
@@ -175,7 +219,7 @@
         border: none;
       }
 
-      window#waybar {
+      window#waybar, #layout {
         background-color: @base;
         color: @text;
         padding: 4px 8px;
@@ -192,12 +236,12 @@
       /* FIX: Use pure GTK CSS mechanics to securely collapse unused elements */
       #tags button:not(.focused):not(.occupied) {
         margin: 0;
-	padding: 0;
-	min-width: 0;
-	font-size: 0px;
-	opacity: 0;
+        padding: 0;
+        min-width: 0;
+        font-size: 0px;
+        opacity: 0;
       }
-      
+
       #tags button.focused {
         background: @mauve;
         color: @base;
@@ -210,9 +254,9 @@
         border-radius: 4px;
       }
 
-      #cpu, #memory, #custom-temps, #pulseaudio, 
+      #cpu, #memory, #custom-temps, #pulseaudio,
       #network, #bluetooth, #battery, #clock, #mpris, #custom-services,
-      #custom-music-viz, #custom-vpn {
+      #custom-music-viz, #custom-vpn, #custom-weather{
         padding: 4px 10px;
         margin: 4px 3px;
         background: @surface0;

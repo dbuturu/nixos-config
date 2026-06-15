@@ -1,7 +1,5 @@
 # home/scripts.nix
-{ pkgs, ... }:
-
-let
+{pkgs, ...}: let
   # writeShellScriptBin creates a derivation with an executable in bin/
   screenshotScript = pkgs.writeShellScriptBin "screenshot" ''
     #!/usr/bin/env bash
@@ -38,7 +36,7 @@ let
   # Combined temperature display for Waybar
   waybarTempsScript = pkgs.writeShellScriptBin "waybar-temps" ''
     #!/usr/bin/env bash
-    
+
     # Find CPU temperature from coretemp sensor
     CPU_TEMP="N/A"
     for sensor in /sys/class/hwmon/hwmon*/temp*_input; do
@@ -56,13 +54,13 @@ let
         fi
       fi
     done
-    
+
     # Get GPU temperature
     GPU_TEMP=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null)
     if [ -z "$GPU_TEMP" ]; then
       GPU_TEMP="N/A"
     fi
-    
+
     # Format output
     echo "🌡️ $CPU_TEMP°C | $GPU_TEMP°C"
   '';
@@ -72,7 +70,7 @@ let
     #!/usr/bin/env bash
     echo "=== Finding all temperature sensors ==="
     echo
-    
+
     echo "--- Hardware Monitor Sensors ---"
     for sensor in /sys/class/hwmon/hwmon*/temp*_input; do
       if [ -f "$sensor" ]; then
@@ -87,9 +85,9 @@ let
         echo "$sensor -> $name: $temp_c°C"
       fi
     done
-    
+
     echo
-    echo "--- DRM Card Sensors ---" 
+    echo "--- DRM Card Sensors ---"
     for sensor in /sys/class/drm/card*/device/hwmon/hwmon*/temp*_input; do
       if [ -f "$sensor" ]; then
         temp=$(cat "$sensor" 2>/dev/null)
@@ -97,7 +95,7 @@ let
         echo "$sensor -> GPU: $temp_c°C"
       fi
     done
-    
+
     echo
     echo "--- NVIDIA GPU via nvidia-smi ---"
     if command -v nvidia-smi >/dev/null 2>&1; then
@@ -107,7 +105,7 @@ let
     else
       echo "nvidia-smi not available"
     fi
-    
+
     echo
     echo "--- NVIDIA GPU via nvidia-settings ---"
     if command -v nvidia-settings >/dev/null 2>&1; then
@@ -120,75 +118,72 @@ let
     else
       echo "nvidia-settings not available"
     fi
-    
+
     echo
     echo "--- Check if NVIDIA modules are loaded ---"
     lsmod | grep nvidia || echo "No nvidia modules loaded"
   '';
 
-
   # Script to create ~/.env file with user prompts
   createEnvScript = pkgs.writeShellScriptBin "create-env" ''
-    #!/usr/bin/env bash
-    
-    ENV_FILE="$HOME/.env"
-    
-    echo "Creating environment variables file at $ENV_FILE"
-    echo "Press Enter to skip any variable you don't want to set."
-    echo
-    
-    # Create or backup existing file
-    if [ -f "$ENV_FILE" ]; then
-      echo "Backing up existing $ENV_FILE to $ENV_FILE.backup"
-      cp "$ENV_FILE" "$ENV_FILE.backup"
-    fi
-    
-    # Start with header
-    cat > "$ENV_FILE" << 'EOF'
-# User environment variables
-# This file is sourced by bash and zsh on shell initialization
-# Edit this file to add or modify environment variables
+        #!/usr/bin/env bash
 
-EOF
-    
-    # Prompt for each variable
-    declare -A variables=(
-      ["ANTHROPIC_API_KEY"]="Anthropic API key for Claude"
-      ["LAMETRIC_API_KEY"]="LaMetric device API key"  
-      ["LAMETRIC_IP"]="LaMetric device IP address"
-      ["WEATHER_LOCATION"]="Weather location (e.g., London,UK or New York,NY)"
-    )
-    
-    for var in "''${!variables[@]}"; do
-      echo -n "Enter $var (''${variables[$var]}): "
-      read -r value
-      
-      if [ -n "$value" ]; then
-        echo "export $var=\"$value\"" >> "$ENV_FILE"
-        echo "✓ Set $var"
-      else
-        echo "⏭ Skipped $var"
-      fi
-    done
-    
-    echo
-    echo "Environment file created at $ENV_FILE"
-    echo "Variables will be available in new shell sessions."
-    echo "Run 'source ~/.env' to load them in the current session."
+        ENV_FILE="$HOME/.env"
+
+        echo "Creating environment variables file at $ENV_FILE"
+        echo "Press Enter to skip any variable you don't want to set."
+        echo
+
+        # Create or backup existing file
+        if [ -f "$ENV_FILE" ]; then
+          echo "Backing up existing $ENV_FILE to $ENV_FILE.backup"
+          cp "$ENV_FILE" "$ENV_FILE.backup"
+        fi
+
+        # Start with header
+        cat > "$ENV_FILE" << 'EOF'
+    # User environment variables
+    # This file is sourced by bash and zsh on shell initialization
+    # Edit this file to add or modify environment variables
+
+    EOF
+
+        # Prompt for each variable
+        declare -A variables=(
+          ["ANTHROPIC_API_KEY"]="Anthropic API key for Claude"
+          ["WEATHER_LOCATION"]="Weather location (e.g., London,UK or New York,NY)"
+        )
+
+        for var in "''${!variables[@]}"; do
+          echo -n "Enter $var (''${variables[$var]}): "
+          read -r value
+
+          if [ -n "$value" ]; then
+            echo "export $var=\"$value\"" >> "$ENV_FILE"
+            echo "✓ Set $var"
+          else
+            echo "⏭ Skipped $var"
+          fi
+        done
+
+        echo
+        echo "Environment file created at $ENV_FILE"
+        echo "Variables will be available in new shell sessions."
+        echo "Run 'source ~/.env' to load them in the current session."
   '';
 
   # Service status indicator script
   serviceStatusScript = pkgs.writeShellScriptBin "waybar-services" ''
     #!/usr/bin/env bash
-    
+
     # Services to monitor
     declare -A services=(
       # ["ollama"]="🤖"
     )
-    
+
     active_services=""
     inactive_count=0
-    
+
     for service in "''${!services[@]}"; do
       if systemctl is-active --quiet "$service" 2>/dev/null; then
         active_services+="''${services[$service]}"
@@ -196,7 +191,7 @@ EOF
         ((inactive_count++))
       fi
     done
-    
+
     # Show active services and count of inactive ones
     if [ $inactive_count -gt 0 ]; then
       echo "$active_services ⚠️$inactive_count"
@@ -208,27 +203,27 @@ EOF
   # Music visualizer script
   musicVisualizerScript = pkgs.writeShellScriptBin "waybar-music-viz" ''
     #!/usr/bin/env bash
-    
+
     # Check if music is playing
     if ! playerctl status 2>/dev/null | grep -q "Playing"; then
       echo ""
       exit 0
     fi
-    
+
     # Simple ASCII visualizer bars
     bars=("▁" "▂" "▃" "▄" "▅" "▆" "▇" "█")
     viz=""
-    
+
     # Generate random visualization (in real setup, you'd use audio data)
     for i in {1..8}; do
       random_height=$((RANDOM % 8))
       viz+="''${bars[$random_height]}"
     done
-    
+
     # Get current song info
     artist=$(playerctl metadata artist 2>/dev/null || echo "Unknown")
     title=$(playerctl metadata title 2>/dev/null || echo "Unknown")
-    
+
     # Format: visualizer + song info
     echo "♪ $viz $title"
   '';
@@ -237,53 +232,31 @@ EOF
   weatherScript = pkgs.writeShellScriptBin "waybar-weather" ''
     #!/usr/bin/env bash
     set -euo pipefail
-    
+
     # Source environment variables
     if [ -f "$HOME/.env" ]; then
       source "$HOME/.env"
     fi
-    
+
     # Default location (can be overridden in ~/.env)
     LOCATION="''${WEATHER_LOCATION:-London,UK}"
-    
+
     # Weather API endpoint (using wttr.in - no API key needed)
-    WEATHER_URL="https://wttr.in/$LOCATION?format=%t|%C|%p"
-    
+    WEATHER_URL="https://wttr.in/$LOCATION?format=%c+%t"
+
     # Fetch weather data with timeout
     if ! weather_data=$(curl -s --connect-timeout 5 --max-time 10 "$WEATHER_URL" 2>/dev/null); then
       echo "🌡️ N/A"
       exit 0
-    fi
-    
-    # Parse response: temperature|condition|precipitation
-    IFS='|' read -r temp condition precip <<< "$weather_data"
-    
-    # Weather condition icons
-    case "$condition" in
-      *"Clear"*|*"Sunny"*) icon="☀️" ;;
-      *"Partly cloudy"*) icon="⛅" ;;
-      *"Cloudy"*|*"Overcast"*) icon="☁️" ;;
-      *"Rain"*|*"Drizzle"*) icon="🌧️" ;;
-      *"Snow"*) icon="🌨️" ;;
-      *"Thunder"*) icon="⛈️" ;;
-      *"Fog"*|*"Mist"*) icon="🌫️" ;;
-      *) icon="🌤️" ;;
-    esac
-    
-    # Format output
-    if [ "$precip" != "0.0mm" ] && [ -n "$precip" ]; then
-      echo "$icon $temp | Rain: $precip"
     else
-      echo "$icon $temp"
+      echo $weather_data
     fi
   '';
-
-
 
   # VPN quick connect/disconnect script
   vpnScript = pkgs.writeShellScriptBin "vpn" ''
     #!/usr/bin/env bash
-    
+
     case "$1" in
       connect)
         echo "Connecting to Belgium VPN..."
@@ -297,7 +270,7 @@ EOF
       status)
         active_vpn=$(nmcli connection show --active | grep "be-bru.prod.surfshark.comsurfshark_openvpn_udp" | awk '{print $1}' | head -1)
         if [ -n "$active_vpn" ]; then
-          echo "✓ Connected to Belgium"
+          echo "✓ Connected"
         else
           echo "✗ Disconnected"
         fi
@@ -315,10 +288,10 @@ EOF
   # Waybar VPN status widget script
   waybarVpnScript = pkgs.writeShellScriptBin "waybar-vpn" ''
     #!/usr/bin/env bash
-    
+
     # Check if VPN is connected
     if nmcli connection show --active | grep -q "be-bru.prod.surfshark.comsurfshark_openvpn_udp"; then
-      echo "🛡️ BE"
+      echo "🛡️"
     else
       echo "🔓"
     fi
@@ -330,7 +303,7 @@ EOF
     set -euo pipefail
 
     TEMPLATE_DIR="/home/dbuturu/nixos-config/dev-templates"
-    
+
     # Show usage if no arguments
     if [ $# -eq 0 ]; then
       echo "🚀 Development Environment Initializer"
@@ -397,7 +370,7 @@ EOF
 
     echo "✅ Development environment initialized!"
     echo "💡 Run 'nix develop' or just 'cd .' to enter the environment"
-    
+
     # Show what was created
     echo
     echo "Created files:"
@@ -413,9 +386,14 @@ EOF
   # Build a self-contained runtime binary wrapper package
   blend-wallpaper = pkgs.writeShellApplication {
     name = "blend-wallpaper";
-    
+
     # Declare runtime dependencies explicitly so Nix patches their absolute paths
-    runtimeInputs = [ pkgs.imagemagick pkgs.swww pkgs.coreutils pkgs.gnugrep ];
+    runtimeInputs = [
+      pkgs.imagemagick
+      pkgs.awww
+      pkgs.coreutils
+      pkgs.gnugrep
+    ];
 
     text = ''
       WALL_DIR="${wallpaperSource}"
@@ -452,11 +430,10 @@ EOF
           cp "$NIGHT" "$OUTPUT_WALL"
       fi
 
-      swww img "$OUTPUT_WALL" --transition-type fade --transition-step 10 --transition-fps 30
+      awww img "$OUTPUT_WALL" --transition-type fade --transition-step 10 --transition-fps 30
     '';
   };
-in
-{
+in {
   # Add the script package to your user's profile
   home.packages = [
     screenshotScript

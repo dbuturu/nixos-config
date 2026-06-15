@@ -1,14 +1,17 @@
 # home/services.nix
-{ pkgs, theme, config, ... }:
-
 {
+  pkgs,
+  theme,
+  config,
+  ...
+}: {
   # -- User-level System Services --
-  
+
   # MPRIS proxy forwards D-Bus media control signals to Waybar
   services.mpris-proxy.enable = true;
 
   # playerctl provides CLI media controls (play, pause, next, etc.)
-  home.packages = [ pkgs.playerctl ];
+  home.packages = [pkgs.playerctl];
 
   # Mako is a Wayland notification daemon - replaces dunst on X11
   services.mako = {
@@ -16,12 +19,12 @@
     # Settings go in a nested attrset, not top-level
     settings = {
       "background-color" = "#${theme.primary_background}";
-      "text-color"       = "#${theme.primary_foreground}";
-      "border-color"     = "#${theme.primary_accent}";
-      "border-size"      = 2;
-      "border-radius"    = 10;
-      "default-timeout"  = 5000;
-      "font"             = "JetBrainsMono Nerd Font 12";
+      "text-color" = "#${theme.primary_foreground}";
+      "border-color" = "#${theme.primary_accent}";
+      "border-size" = 2;
+      "border-radius" = 10;
+      "default-timeout" = 5000;
+      "font" = "JetBrainsMono Nerd Font 12";
     };
   };
 
@@ -29,7 +32,7 @@
   systemd.user.services.dynamic-wallpaper = {
     Unit = {
       Description = "Calculate and update dynamic blended wallpaper via swww";
-      After = [ "swww-daemon.service" ];
+      After = ["awww-daemon.service"];
     };
     Service = {
       Type = "oneshot";
@@ -47,13 +50,13 @@
       Persistent = true;
     };
     Install = {
-      WantedBy = [ "timers.target" ];
+      WantedBy = ["timers.target"];
     };
   };
-  
+
   services.wlsunset = {
     enable = true;
-    latitude = "-1.09";  # Approximate for Narok
+    latitude = "-1.09"; # Approximate for Narok
     longitude = "35.86";
     temperature = {
       day = 6500;

@@ -1,26 +1,25 @@
 # home/shell.nix
-{ pkgs, config, ... }:
-
-{
+{config, ...}: {
   # Zsh Configuration
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    
+
     # Completion settings
     completionInit = ''
       autoload -U compinit
       compinit
-      
+
       # Case insensitive completion
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-      
+
       # Better completion behavior
       zstyle ':completion:*' menu select
       zstyle ':completion:*' use-cache on
       zstyle ':completion:*' cache-path ~/.zsh/cache
+      export EDITOR = nvim
     '';
 
     # Add your aliases here
@@ -64,34 +63,34 @@
 
     dirHashes = {
       cac = "${config.xdg.cacheHome}";
-      cf  = "${config.xdg.configHome}";
-      D   = "${config.home.homeDirectory}/Downloads";
-      d   = "${config.home.homeDirectory}/Documents";
-      dt  = "${config.xdg.dataHome}";
-      rr  = "${config.home.homeDirectory}/.local/src";
-      h   = "${config.home.homeDirectory}";
-      m   = "${config.home.homeDirectory}/Music";
-      mn  = "/mnt";
-      pp  = "${config.home.homeDirectory}/Pictures";
-      sc  = "${config.home.homeDirectory}/.local/bin";
+      cf = "${config.xdg.configHome}";
+      D = "${config.home.homeDirectory}/Downloads";
+      d = "${config.home.homeDirectory}/Documents";
+      dt = "${config.xdg.dataHome}";
+      rr = "${config.home.homeDirectory}/.local/src";
+      h = "${config.home.homeDirectory}";
+      m = "${config.home.homeDirectory}/Music";
+      mn = "/mnt";
+      pp = "${config.home.homeDirectory}/Pictures";
+      sc = "${config.home.homeDirectory}/.local/bin";
       src = "${config.home.homeDirectory}/.local/src";
-      vv  = "${config.home.homeDirectory}/Videos";
+      vv = "${config.home.homeDirectory}/Videos";
     };
 
     # Oh My Zsh provides themes and plugins for zsh
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "sudo" ]; # Plugin names from oh-my-zsh repository
+      plugins = ["git" "sudo"]; # Plugin names from oh-my-zsh repository
     };
 
     # initContent runs after zsh starts - for shell integrations and environment
     initContent = ''
       # Source user environment variables if the file exists
       [ -f ~/.env ] && source ~/.env
-      
+
       # Initialize tools
       eval "$(zoxide init zsh --cmd cd)"
-      
+
       # --- VI Mode Setup ---
       # Enable vi-mode keybindings, equivalent to 'set editing-mode vi'
       bindkey -v
@@ -114,7 +113,7 @@
       # Autosuggestion settings for better visibility and behavior
       ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666680,bold"
       ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-      
+
       # Keybindings for autocompletion
       bindkey '^I' complete-word              # Tab for completion
       bindkey '^[[Z' reverse-menu-complete    # Shift+Tab for reverse completion
