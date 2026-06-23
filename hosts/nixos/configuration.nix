@@ -6,7 +6,8 @@
   pkgs-unstable,
   theme,
   ...
-}: {
+}:
+{
   imports = [
     ./hardware-configuration.nix # Auto-generated hardware config
     ./system-packages.nix # System-wide packages
@@ -36,12 +37,14 @@
     # Firewall configuration for Minecraft server
     firewall = {
       enable = true;
-      allowedTCPPorts = [25565]; # Minecraft server
-      allowedUDPPorts = [25565]; # Minecraft server
+      allowedTCPPorts = [ 25565 ]; # Minecraft server
+      allowedUDPPorts = [ 25565 ]; # Minecraft server
     };
   };
 
   services = {
+    dbus.enable = true;
+
     # DNS resolution service for caching and security
     resolved = {
       enable = true;
@@ -64,7 +67,7 @@
     };
 
     # Enable NVIDIA driver loading
-    xserver.videoDrivers = ["nvidia"];
+    xserver.videoDrivers = [ "nvidia" ];
     xserver.screenSection = ''
       Option "Coolbits" "28"
     '';
@@ -119,12 +122,13 @@
         };
       };
     };
+    orca.enable = true;
   };
 
   security.rtkit.enable = true; # Real-s scheduling for audio
 
   # Enable PAM authentication for screen locking
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   # Timezone and Locale
   time.timeZone = "Africa/Nairobi";
@@ -149,9 +153,11 @@
       inherit pkgs-unstable theme;
       nixvim = inputs.nixvim;
     }; # Pass variables to home config
-    users.dbuturu = {...}: {
-      # User configuration defined in home.nix
-    };
+    users.dbuturu =
+      { ... }:
+      {
+        # User configuration defined in home.nix
+      };
   };
 
   # Nix configuration
@@ -197,7 +203,7 @@
 
   systemd.user.timers.nix-gc-user = {
     description = "Nix Garbage Collection Timer (User)";
-    wantedBy = ["timers.target"];
+    wantedBy = [ "timers.target" ];
     timerConfig = {
       OnCalendar = "daily";
       RandomizedDelaySec = "1800"; # 30min random delay
